@@ -20,11 +20,20 @@ int counterReducer(int state, dynamic action) {
 void main() {
   final store = Store<int>(counterReducer, initialState: 0);
 
-User user = User('john', '055');
-print(user.getname());
+  var user = User(email:'john', phoneNumber: '055');
+  print(user.email);
+
+User userReducer(User state, dynamic action) {
+  if (action == User) {
+    return action;
+  }
+  return state;
+}
+
+  final userStore = Store<User>(userReducer, initialState: user);
 
   runApp(FlutterReduxApp(
-    title: 'Flutter Redux Demo',
+    title: 'User Redux Login',
     store: store,
   ));
 }
@@ -61,41 +70,42 @@ class FlutterReduxApp extends StatelessWidget {
                       style: Theme.of(context).textTheme.display1,
                     );
                   },
-                ), Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: StoreConnector<int, VoidCallback>(
-                            builder: (context, callback) {
-                              return OutlineButton(
-                                padding: EdgeInsets.all(12.0),
-                                onPressed: callback,
-                                child: Icon(Icons.add),
-                              );
-                            },
-                            converter: (store) {
-                              return () => store.dispatch(Actions.Increment);
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: StoreConnector<int, VoidCallback>(
-                            builder: (context, callback) {
-                              return OutlineButton(
-                                padding: EdgeInsets.all(12.0),
-                                onPressed: callback,
-                                child: Icon(Icons.remove),
-                                );
-                            },
-                            converter: (store) {
-                              return () => store.dispatch(Actions.Decrement);
-                            },
-                          ),
-                        ),
-                      ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: StoreConnector<int, VoidCallback>(
+                        builder: (context, callback) {
+                          return OutlineButton(
+                            padding: EdgeInsets.all(12.0),
+                            onPressed: callback,
+                            child: Icon(Icons.add),
+                          );
+                        },
+                        converter: (store) {
+                          return () => store.dispatch(Actions.Increment);
+                        },
+                      ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: StoreConnector<int, VoidCallback>(
+                        builder: (context, callback) {
+                          return OutlineButton(
+                            padding: EdgeInsets.all(12.0),
+                            onPressed: callback,
+                            child: Icon(Icons.remove),
+                            );
+                        },
+                        converter: (store) {
+                          return () => store.dispatch(Actions.Decrement);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
