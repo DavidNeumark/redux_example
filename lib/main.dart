@@ -5,23 +5,25 @@ import 'package:redux/redux.dart';
 import 'package:redux_example/user.dart';
 
 
-enum Actions { Increment }
+enum Actions { Increment , Decrement }
 
 int counterReducer(int state, dynamic action) {
   if (action == Actions.Increment) {
     return state + 1;
+  } else if (action == Actions.Decrement) {
+    return state -1;
   }
 
   return state;
 }
 
 void main() {
-  final store = new Store<int>(counterReducer, initialState: 0);
+  final store = Store<int>(counterReducer, initialState: 0);
 
 User user = User('john', '055');
 print(user.getname());
 
-  runApp(new FlutterReduxApp(
+  runApp(FlutterReduxApp(
     title: 'Flutter Redux Demo',
     store: store,
   ));
@@ -35,48 +37,74 @@ class FlutterReduxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreProvider<int>(
+    return StoreProvider<int>(
       store: store,
-      child: new MaterialApp(
-        theme: new ThemeData.dark(),
+      child: MaterialApp(
+        theme: ThemeData.light(),
         title: title,
-        home: new Scaffold(
-          appBar: new AppBar(
-            title: new Text(title),
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text(title),
           ),
-          body: new Center(
-            child: new Column(
+          body: Center(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                new Text(
+                Text(
                   'You have pushed the button this many times:',
                 ),
-                new StoreConnector<int, String>(
+                StoreConnector<int, String>(
                   converter: (store) => store.state.toString(),
                   builder: (context, count) {
-                    return new Text(
+                    return Text(
                       count,
                       style: Theme.of(context).textTheme.display1,
                     );
                   },
-                )
+                ), Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: StoreConnector<int, VoidCallback>(
+                            builder: (context, callback) {
+                              return OutlineButton(
+                                padding: EdgeInsets.all(12.0),
+                                onPressed: callback,
+                                child: Icon(Icons.add),
+                              );
+                            },
+                            converter: (store) {
+                              return () => store.dispatch(Actions.Increment);
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: StoreConnector<int, VoidCallback>(
+                            builder: (context, callback) {
+                              return OutlineButton(
+                                padding: EdgeInsets.all(12.0),
+                                onPressed: callback,
+                                child: Icon(Icons.remove),
+                                );
+                            },
+                            converter: (store) {
+                              return () => store.dispatch(Actions.Decrement);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
               ],
             ),
-          ),
-          floatingActionButton: new StoreConnector<int, VoidCallback>(
-            converter: (store) {
-              return () => store.dispatch(Actions.Increment);
-            },
-            builder: (context, callback) {
-              return new FloatingActionButton(
-                onPressed: callback,
-                tooltip: 'Increment',
-                child: new Icon(Icons.add),
-              );
-            },
           ),
         ),
       ),
     );
   }
+
+
+
+
 }
